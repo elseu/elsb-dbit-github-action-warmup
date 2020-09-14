@@ -20,10 +20,10 @@ waitingStatus = 'Pending'
 instanceStatus = instance['LifecycleState']
 
 #We wait for inService status
-inService = instanceStatus = instance['LifecycleState'] == desiredStatus
+inService = instanceStatus == desiredStatus
 while ((not inService) and (waitingStatus in instanceStatus)):
   instanceStatus = instance['LifecycleState']
-  inService = instanceStatus = instance['LifecycleState'] == desiredStatus
+  inService = instanceStatus == desiredStatus
   time.sleep(10)
 
 if instanceStatus == desiredStatus:
