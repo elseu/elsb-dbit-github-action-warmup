@@ -3,7 +3,7 @@ import sys
 import boto3
 import time
 
-## Get ASG Name
+## Get params
 asgName = sys.argv[1]
 
 ## Set Desired Instance to 1 in ASG
@@ -12,7 +12,7 @@ asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacit
 
 #We get first instance of ASG
 asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
-instancesList = asgDescription['Instances']
+instancesList = asgDescription['AutoScalingGroups'][0]['Instances']
 instance = instancesList[0]
 
 
