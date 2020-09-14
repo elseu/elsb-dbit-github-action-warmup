@@ -10,35 +10,25 @@ asgName = sys.argv[1]
 asgClient = boto3.client('autoscaling')
 asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
 
-time.sleep(30)
-asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
-print(asgDescription)
-print(asgDescription['AutoScalingGroups'][0]['Instances'])
-
 #We get first instance of ASG
 instancesList = []
-#while len(instancesList) == 0:
-#  asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
-#  instancesList = asgDescription['AutoScalingGroups'][0]['Instances']
-#  time.sleep(5)
-#  print("Loop in ASG Instance List")
-#
-# instance = instancesList[0]
-#
-# desiredStatus = 'InService'
-# instanceStatus = instance['LifecycleState']
-#
-# #We wait for inService status
-# while instanceStatus != desiredStatus:
-#   print(instance)
-#   time.sleep(10)
-#
-# if instanceStatus == desiredStatus:
-#   exit(0)
-# else:
-#   exit(1)
+while True:
+  asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
+  instancesList = asgDescription['AutoScalingGroups'][0]['Instances']
 
+  print("Loop in ASG Instance List")
 
+  if len(instancesList) == 0:
+    time.sleep(5)
+    continue
+
+  instance = instancesList[0]
+  instanceStatus = instance['LifecycleState']
+
+  if instance['LifecycleState'] == 'InService':
+    exit(0)
+  else:
+    time.sleep(5)
 
 
 
