@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM amazon/aws-cli
 
 COPY warmup.py /warmup.py
 
