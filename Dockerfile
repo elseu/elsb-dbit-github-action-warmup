@@ -1,5 +1,6 @@
-FROM amazon/aws-cli
+FROM python:3.8
 
+RUN pip install --user boto3
 COPY warmup.py /warmup.py
 
 ENTRYPOINT ["/warmup.py"]
