@@ -11,10 +11,13 @@ asgClient = boto3.client('autoscaling')
 asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
 
 #We get first instance of ASG
-asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
-instancesList = asgDescription['AutoScalingGroups'][0]['Instances']
-instance = instancesList[0]
+instancesList = []
+while len(instancesList) == 0:
+  asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
+  instancesList = asgDescription['AutoScalingGroups'][0]['Instances']
+  time.sleep(5)
 
+instance = instancesList[0]
 
 desiredStatus = 'InService'
 waitingStatus = 'Pending'
