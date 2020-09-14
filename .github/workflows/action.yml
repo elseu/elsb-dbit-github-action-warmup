@@ -1,0 +1,12 @@
+name: 'Github Action Warmup ASG'
+description: 'Warmup EC2 to Deploy application'
+inputs:
+  asg-names:  # id of input
+    description: 'Autoscaling group name'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.asg-names }}
