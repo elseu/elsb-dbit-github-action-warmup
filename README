@@ -1,0 +1,12 @@
+Github action to start an instance in ASG if desired is 0
+
+This script can process several ASG at time using following :
+
+- python warmup.py <AsgName1> wAsgName2> <AsgName3> ....
+
+- python warmup.py SphinxJobs-LarbizSphinxWebserviceStack-TLPCMLE9W6H7-ScalingGroup-1VB3HTY0H0CU4
+
+If desired is at 0 in ASG, we update to 1 and we are waiting for "InService"  instance's status.
+We process each ASG passed in args until each one have a running instance.
+
+If desired is up to 0, we just ignore ASG

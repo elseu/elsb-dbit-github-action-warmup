@@ -3,32 +3,51 @@ import sys
 import boto3
 import time
 
-## Get params
-asgName = sys.argv[1]
+asgList = {}
 
-## Set Desired Instance to 1 in ASG
-asgClient = boto3.client('autoscaling')
-asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
-
-#We get first instance of ASG
-instancesList = []
-while True:
+def get_asg_list_instance(asgName):
   asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
-  instancesList = asgDescription['AutoScalingGroups'][0]['Instances']
+  return asgDescription['AutoScalingGroups'][0]['Instances']
 
-  print("Loop in ASG Instance List")
 
-  if len(instancesList) == 0:
-    time.sleep(5)
-    continue
+## Get params
+if len(sys.argv) < 2:
+  print("Usage : warmup.py <AsgName1> [<AsgName2> <AsgName2> ....]")
+  exit(0)
 
-  instance = instancesList[0]
-  instanceStatus = instance['LifecycleState']
+## Set Desired Instance to 1 in ASG if not already starter
+paramIndice = 1
+while (paramIndice < len(sys.argv)):
+  asgName = sys.argv[paramIndice]
+  asgClient = boto3.client('autoscaling')
 
-  if instance['LifecycleState'] == 'InService':
-    exit(0)
-  else:
-    time.sleep(5)
+  if len(get_asg_list_instance(asgName)) == 0:
+    print("-- Process ASG %s" % asgName)
+    asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
+    asgList[asgName] = "startup"
+  else :
+    print("-- ASG %s have already running instances -> No start needed" % asgName)
+  paramIndice += 1
+
+## Wait instance are running and InService for all ASG
+asgToWarmup = len(asgList.keys())
+while asgToWarmup > 0:
+  listAsgName = asgList.keys()
+  for asgName in listAsgName:
+    if asgList[asgName] == "startup":
+      instancesList =get_asg_list_instance(asgName)
+      print("-- Wait InService Instance for ASG %s" % asgName)
+      if len(instancesList) != 0:
+        asgList[asgName] = instancesList[0]
+        print("-- Instance for ASG %s is Pending" % asgName)
+    else:
+      if asgList[asgName]['LifecycleState'] == 'InService':
+        asgList.pop(asgName)
+        print("-- ASG %s warmup ok" % asgName)
+  time.sleep(1)
+  asgToWarmup = len(asgList.keys())
+
+exit(0)
 
 
 
