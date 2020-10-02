@@ -14,24 +14,23 @@ def get_asg_list_instance(asgName):
 
 
 ## Get params
-if len(sys.argv) < 2:
-  print("Usage : warmup.py <AsgName1> [<AsgName2> <AsgName2> ....]")
+if len(sys.argv) != 2:
+  print("Usage : warmup.py \"<AsgName1> [<AsgName2> <AsgName2> ....]\"")
   exit(-1)
 
 ## Set Desired Instance to 1 in ASG if not already starter
-paramIndice = 1
-print("Number of ASG to process : %s" % str(len(sys.argv)-1))
-while (paramIndice < len(sys.argv)):
-  asgName = sys.argv[paramIndice]
-  asgClient = boto3.client('autoscaling')
+## ASG list is passed with space between each one
+list_asg = sys.argv[1].split(' ')
 
+print("Number of ASG to process : %s" % str(len(list_asg)))
+for asgName in list_asg:
+  asgClient = boto3.client('autoscaling')
   if len(get_asg_list_instance(asgName)) == 0:
     print("-- Process ASG %s" % asgName)
     asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
     asgList[asgName] = "startup"
   else :
     print("-- ASG %s have already running instances -> No start needed" % asgName)
-  paramIndice += 1
 
 
 ## Wait instance are running and InService for all ASG
