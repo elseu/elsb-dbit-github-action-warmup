@@ -7,7 +7,10 @@ asgList = {}
 
 def get_asg_list_instance(asgName):
   asgDescription = asgClient.describe_auto_scaling_groups(AutoScalingGroupNames=[asgName])
-  return asgDescription['AutoScalingGroups'][0]['Instances']
+  if ('AutoScalingGroups' in asgDescription) and (len(asgDescription['AutoScalingGroups'])>0):
+    return asgDescription['AutoScalingGroups'][0]['Instances']
+  else :
+    return []
 
 
 ## Get params
