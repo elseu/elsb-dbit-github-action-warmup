@@ -10,6 +10,15 @@ inputs:
   asg-names3:  # id of input 3
     description: 'Autoscaling group name'
     required: false
+  asg-names4:  # id of input 4
+    description: 'Autoscaling group name'
+    required: false
+  asg-names5:  # id of input 5
+    description: 'Autoscaling group name'
+    required: false
+  asg-names6:  # id of input 6
+    description: 'Autoscaling group name'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -17,3 +26,6 @@ runs:
     - ${{ inputs.asg-names }}
     - ${{ inputs.asg-names2 }}
     - ${{ inputs.asg-names3 }}
+    - ${{ inputs.asg-names4 }}
+    - ${{ inputs.asg-names5 }}
+    - ${{ inputs.asg-names6 }}
