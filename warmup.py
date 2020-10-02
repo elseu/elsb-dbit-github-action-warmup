@@ -20,6 +20,7 @@ if len(sys.argv) < 2:
 
 ## Set Desired Instance to 1 in ASG if not already starter
 paramIndice = 1
+print("Number of ASG to process : %s" % str(len(sys.argv)-1))
 while (paramIndice < len(sys.argv)):
   asgName = sys.argv[paramIndice]
   asgClient = boto3.client('autoscaling')
