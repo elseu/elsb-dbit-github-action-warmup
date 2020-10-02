@@ -13,7 +13,7 @@ def get_asg_list_instance(asgName):
 ## Get params
 if len(sys.argv) < 2:
   print("Usage : warmup.py <AsgName1> [<AsgName2> <AsgName2> ....]")
-  exit(0)
+  exit(-1)
 
 ## Set Desired Instance to 1 in ASG if not already starter
 paramIndice = 1
@@ -29,23 +29,30 @@ while (paramIndice < len(sys.argv)):
     print("-- ASG %s have already running instances -> No start needed" % asgName)
   paramIndice += 1
 
+
 ## Wait instance are running and InService for all ASG
-asgToWarmup = len(asgList.keys())
-while asgToWarmup > 0:
-  listAsgName = asgList.keys()
-  for asgName in listAsgName:
+listAsgToWarmup = list(asgList.keys())
+numberIter = len(listAsgToWarmup)
+print("-- %s ASG To warmup ! " % numberIter)
+
+while numberIter > 0:
+  for asgName in listAsgToWarmup:
+    instancesList = get_asg_list_instance(asgName)
     if asgList[asgName] == "startup":
-      instancesList =get_asg_list_instance(asgName)
       print("-- Wait InService Instance for ASG %s" % asgName)
       if len(instancesList) != 0:
         asgList[asgName] = instancesList[0]
         print("-- Instance for ASG %s is Pending" % asgName)
     else:
+      if len(instancesList) == 0:
+        print("-- ASG %s warmup failed" % asgName)
+        exit(-1)
+      asgList[asgName] = instancesList[0]
       if asgList[asgName]['LifecycleState'] == 'InService':
-        asgList.pop(asgName)
+        listAsgToWarmup.remove(asgName)
         print("-- ASG %s warmup ok" % asgName)
   time.sleep(1)
-  asgToWarmup = len(asgList.keys())
+  numberIter = len(listAsgToWarmup)
 
 exit(0)
 
