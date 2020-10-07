@@ -1,9 +1,17 @@
 name: 'Github Action Warmup ASG'
 description: 'Warmup EC2 to Deploy application'
+
 inputs:
   asg-names:  # id of input 1
     description: 'Autoscaling group name'
     required: true
+  code-deploy-app: # id of input 2
+    description: 'CodeDeploy APP  name'
+    required: true
+  deployment-group: # id of input 3
+    description: 'Codeploy deployment group name'
+    required: true
+
 runs:
   using: 'docker'
   image: 'Dockerfile'
