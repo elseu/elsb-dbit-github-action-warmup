@@ -45,7 +45,9 @@ for asgName in list_asg:
   if len(get_asg_list_instance(asgName)) == 0:
     print("-- Process ASG %s" % asgName)
     asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
+    print("******* Number instance start : %s" % str(len(get_asg_list_instance(asgName))))
     while (get_asg_list_instance(asgName)) == 0:
+      print ("***** INSTANCE NOT START : update desired again ------------")
       asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
     asgList[asgName] = "startup"
   else :
@@ -65,6 +67,9 @@ while numberIter > 0:
       if len(instancesList) != 0:
         asgList[asgName] = instancesList[0]
         print("-- Instance for ASG %s is Pending" % asgName)
+      else:
+        print("******* TEST ASG WARMUP -> UPDATE DESIRED")
+        asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
     else:
       if len(instancesList) == 0:
         print("-- ASG %s warmup failed" % asgName)
