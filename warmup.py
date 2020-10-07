@@ -69,9 +69,13 @@ while numberIter > 0:
         exit(-1)
       asgList[asgName] = instancesList[0]
       if asgList[asgName]['LifecycleState'] == 'InService':
+        print("-- Instance for ASG %s is InService" % asgName)
         if deployment_is_terminated(codedeployClient, codedeploy_app, codedeploy_deployment_group):
           listAsgToWarmup.remove(asgName)
           print("-- ASG %s warmup ok" % asgName)
+        else:
+          print("-- Deployement %s is already in progress" % codedeploy_deployment_group)
+
   time.sleep(5)
   numberIter = len(listAsgToWarmup)
 
