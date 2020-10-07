@@ -44,9 +44,9 @@ print("Number of ASG to process : %s" % str(len(list_asg)))
 for asgName in list_asg:
   if len(get_asg_list_instance(asgName)) == 0:
     print("-- Process ASG %s" % asgName)
+    asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
     while (get_asg_list_instance(asgName)) == 0:
       asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
-    asgClient.update_auto_scaling_group(AutoScalingGroupName=asgName, DesiredCapacity=1)
     asgList[asgName] = "startup"
   else :
     print("-- ASG %s have already running instances -> No start needed" % asgName)
