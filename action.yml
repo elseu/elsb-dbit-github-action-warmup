@@ -9,3 +9,5 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.asg-names }}
+    - ${{ inputs.code-deploy-app }}
+    - ${{ inputs.deployment-group }}
